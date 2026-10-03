@@ -1,3 +1,4 @@
+<img width="512" height="384" alt="VirtualBoxVM_xL9qf8Sblx" src="https://github.com/user-attachments/assets/e6df6dfc-08b7-49a2-9726-de9e52663803" />
 # Sysmon Deployment
 
 **Status:** Complete
