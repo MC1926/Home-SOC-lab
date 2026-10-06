@@ -44,5 +44,5 @@ Process 12004 also produced several internal 4104 blocks (`$global:?`, `$_.Origi
 - Check the destination domain's reputation and whether the download succeeded.
 - Look for network connection events (Sysmon Event ID 3) and DNS lookups for the same process.
 - Review `jit`'s other activity around the same time.
-- Confirm whether this user should ever run PowerShell at all.<img width="512" height="384" alt="VirtualBoxVM_2yC3QzCPSI" src="https://github.com/user-attachments/assets/367b14f0-7b86-42be-943f-68fa3ffb8b87" />
+- Confirm whether this user should ever run PowerShell at all.
 
