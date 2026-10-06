@@ -10,7 +10,8 @@ The download returned a 404, so no payload was retrieved.
 As `jit`, I ran the command in a new PowerShell process. The remote server returned
 a 404 error, but the attempt still happened and was logged.
 
-![jit running the command](jit-command.png)
+<img width="512" height="384" alt="VirtualBoxVM_2yC3QzCPSI" src="https://github.com/user-attachments/assets/04da908a-bf21-4acd-9e61-1d57e2099624" />
+
 
 ## What I Observed
 
@@ -23,10 +24,12 @@ a 404 error, but the attempt still happened and was logged.
 | Other | Parent: powershell.exe (PID 12588), IntegrityLevel: Medium | ScriptBlock ID: 55c61888-557d-457f-affd-f25434984976 |
 
 ### Sysmon Event ID 1
-![Sysmon process creation](sysmon-event1.png)
+<img width="512" height="384" alt="VirtualBoxVM_TosoE058J4" src="https://github.com/user-attachments/assets/cca0836d-68ac-4bba-90c7-ab0d01816399" />
+
 
 ### PowerShell Event ID 4104
-![PowerShell script block log](ps-4104.png)
+<img width="512" height="384" alt="VirtualBoxVM_7AAYvdFlEc" src="https://github.com/user-attachments/assets/63bee5b0-8ba7-4216-986c-c1e17a88cc96" />
+
 
 ## Why Both Sources Matter
 - **Sysmon Event ID 1** answers who and what launched: the user, the process, its parent, and the privilege level.
