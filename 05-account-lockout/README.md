@@ -20,7 +20,7 @@ Threshold is 3. Lockout duration and observation window are both 30 minutes.
 
 ## 3. Symptom confirmed
 
-![Uploading VirtualBoxVM_NR9sXgQtkW.png…]()
+<img width="503" height="366" alt="VirtualBoxVM_NR9sXgQtkW" src="https://github.com/user-attachments/assets/4e36b14b-e0de-4594-8298-d6f2896c8a3c" />
 
 Windows shows: "The referenced account is currently locked out and may not be logged on to."
 
@@ -32,7 +32,7 @@ I queried the Security log on the domain controller for the latest Event ID 4740
 Get-WinEvent -FilterHashtable @{LogName='Security'; ID=4740} -MaxEvents 1 | Format-List TimeCreated, Message
 ```
 
-![Uploading VirtualBoxVM_mynCz8XezX.png…]()
+<img width="502" height="375" alt="VirtualBoxVM_mynCz8XezX" src="https://github.com/user-attachments/assets/85c834b1-27a3-48b2-b45d-14b70fe2856e" />
 
 | Field | Value | Meaning |
 |---|---|---|
@@ -52,7 +52,7 @@ Unlock-ADAccount -Identity jit
 Get-ADUser jit -Properties LockedOut | Select Name, LockedOut
 ```
 
-![Uploading explorer_R8uyDSq3GX.png…]()
+<img width="1004" height="749" alt="explorer_R8uyDSq3GX" src="https://github.com/user-attachments/assets/3ca89e90-0b85-418f-853d-eebbf61072f1" />
 
 `LockedOut` returned `False`. The account was unlocked and verified.
 
