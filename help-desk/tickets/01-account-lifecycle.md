@@ -33,6 +33,40 @@
 - **Typos with dashes.** A space after a dash, or a missing dash, makes PowerShell reject the whole command. I fixed them by reading the error and editing the line.
 - **Lesson:** a command that prints nothing succeeded or silently did the wrong thing. Always verify with a `Get-` command.
 
-## Ticket 2: Password reset — (in progress)
+## Ticket 2: Password reset — DONE
+
+**Ticket:** Sam Rivera forgot his password. Reset it, make him choose a new one at his next sign-in, and sign in as Sam on the client.
+
+**What I did on DC01 (PowerShell):**
+
+1. Searched for the right command with `Get-Command *Password*` and found `Set-ADAccountPassword`.
+2. Read the syntax with `Get-Help Set-ADAccountPassword` and found the `-Reset` option, which sets a new password without needing the old one.
+3. Reset the password: `Set-ADAccountPassword -Identity srivera -Reset`. PowerShell asked me to type the new password twice, hidden.
+4. Made Sam change it at his next sign-in: `Set-ADUser -Identity srivera -ChangePasswordAtLogon $true`.
+5. Checked it with `Get-ADUser -Identity srivera -Properties *`. It showed `PasswordExpired : True`.
+
+**What I did on the client:**
+
+1. Signed in as `HOMELAB\srivera` with the temporary password.
+2. Windows said the password must be changed before signing in, and I set a new one.
+3. Ran `whoami` and it showed `homelab\srivera`.
+
+**What went wrong:**
+
+- My first try was `Set-ADAccountPassword srivera` without `-Reset`. It asked for Sam's current password, which means it was a password change, not a reset. A technician can't ask for a password the user forgot, so I redid it with `-Reset`.
+- My first `Set-ADUser` command had `-ChangePasswordAtLogon` with nothing after it, which gave a "missing an argument" error. The syntax showed `<bool>`, which means a yes or no value, so I added `$true`.
+
+**What I learned:**
+
+- A password change needs the old password. A reset does not.
+- `<bool>` means true or false, written `$true` or `$false`.
+- After a change, I check it with a `Get-` command.
+
+<img width="512" height="384" alt="VirtualBoxVM_JTznk9QoRH" src="https://github.com/user-attachments/assets/8bb36ca8-21f3-4f69-b5c6-d7bccd05155c" />
+<img width="512" height="384" alt="VirtualBoxVM_Eunof3sJyP" src="https://github.com/user-attachments/assets/f33a2e67-d807-4422-9266-4982883278f2" />
+<img width="512" height="384" alt="VirtualBoxVM_xFsHRaKwUH" src="https://github.com/user-attachments/assets/3b474ffb-1dc9-4cc1-a525-dee264d98be4" />
+<img width="512" height="384" alt="VirtualBoxVM_yjStclF5KT" src="https://github.com/user-attachments/assets/18562ad4-5d05-4ad5-b4d1-ff675824f0a3" />
+<img width="512" height="384" alt="VirtualBoxVM_Vz5yOfivy6" src="https://github.com/user-attachments/assets/e1c9c7bc-663a-43cc-8082-e11884eb4689" />
+
 ## Ticket 3: Shared folder — (not started)
 ## Ticket 4: Leaver — (not started)
