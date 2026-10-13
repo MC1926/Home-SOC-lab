@@ -100,4 +100,41 @@
 <img width="512" height="384" alt="VirtualBoxVM_CPc8VCLcqY" src="https://github.com/user-attachments/assets/2ea1f6bc-6366-49ff-bee2-fcab6b333755" />
 <img width="512" height="384" alt="VirtualBoxVM_3dC3x1Z4Og" src="https://github.com/user-attachments/assets/ee118776-c7d6-4f9f-937a-c2d95f677316" />
 
-## Ticket 4: Leaver — (not started)
+## Ticket 4: Leaver (Sam Rivera quit)
+
+**What the ticket asked:** Sam quit. Disable his account, remove him from the Sales-Team group, move him to a Disabled folder (Organizational Unit) in Active Directory, and prove he can't sign in.
+
+### What I did (on DC01, in PowerShell)
+
+**1. Disabled the account.** I looked for a command with `Get-Command Disable*`, found `Disable-ADAccount`, and read its syntax with `Get-Help`. It only needs `-Identity` (which account). I ran `Disable-ADAccount srivera`. It printed nothing, so I checked with `Get-ADUser srivera` and it said `Enabled : False`.
+
+<img width="512" height="384" alt="VirtualBoxVM_oVh5OwlXIZ" src="https://github.com/user-attachments/assets/05b58cbc-ebe2-4418-a939-0a3c80e85244" />
+
+**2. Removed him from Sales-Team.** I forgot the group name, so I looked it up with `Get-ADGroup -Filter *` and `Get-ADPrincipalGroupMembership srivera`. That showed he was in `Domain Users` and `Sales-Team`. I ran `Remove-ADGroupMember Sales-Team srivera`, typed `y` when it asked if I was sure, then ran `Get-ADPrincipalGroupMembership srivera` again. Only `Domain Users` was left. (Everyone stays in Domain Users, that is normal.)
+
+!<img width="510" height="384" alt="VirtualBoxVM_LmPKqq7TIW" src="https://github.com/user-attachments/assets/e08eb9a4-4d52-483c-bf41-41c46da43d5c" />
+
+**3. Made a Disabled folder and moved him.** I ran `New-ADOrganizationalUnit Disabled` and checked it with `Get-ADOrganizationalUnit -Filter *`. Then I used `Move-ADObject` with `-Identity` (his full address) and `-TargetPath` (the Disabled folder's address). My first try failed because I left out the quotes, missed a comma, and typed the wrong ending. Both addresses need quotes because they have commas and a space. After that `Get-ADUser srivera` showed `CN=Sam Rivera,OU=Disabled,DC=homelab,DC=local`.
+
+<img width="512" height="384" alt="VirtualBoxVM_22Ej35LiyR" src="https://github.com/user-attachments/assets/e88dd9ed-1ac4-4e14-9787-743a55dc526e" />
+**4. Tested the sign-in on the client.** The first time I tried, it let me in as `homelab\srivera`. I think that was because his old session from Ticket 2 was still open. Disabling an account stops new sign-ins, but it does not kick out someone who is already signed in. I signed out all the way and tried again, and Windows said: "Your account has been disabled. Please see your system administrator."
+
+<img width="512" height="384" alt="VirtualBoxVM_wJCtpUOKr8" src="https://github.com/user-attachments/assets/7aa74656-fe22-4296-8f15-7e8c4205d633" />
+**What I learned:** on a real leaver ticket I should disable the account and also make sure he is signed out of any computer.
+
+### Audit trail (Event Viewer records on DC01)
+
+I used `Get-EventLog -LogName Security -InstanceId <number> | Format-List *` (DC01 has no screen, so `Show-EventLog` doesn't work). I only changed the number each time.
+
+| Event ID | What it means | Ticket | Who did it | Who it was done to | When |
+|---|---|---|---|---|---|
+| 4720 | A user account was created | 1 | MC | srivera | Mon Oct 12 |
+| 4724 | An attempt was made to reset an account's password | 2 | MC | srivera | Mon Oct 12, 12:43 PM |
+| 4728 | A member was added to a global group (Sales-Team) | 1 | MC | srivera | Mon Oct 12, 7:12 AM |
+| 4725 | A user account was disabled | 4 | MC | srivera | Tue Oct 13, 12:40 PM |
+| 4729 | A member was removed from a global group (Sales-Team) | 4 | MC | srivera | Tue Oct 13, 12:52 PM |
+
+<img width="512" height="384" alt="VirtualBoxVM_JiELxvRaj0" src="https://github.com/user-attachments/assets/ce974996-d004-444a-bd1d-721fb9975598" /><img width="512" height="384" alt="VirtualBoxVM_rk4T105SEI" src="https://github.com/user-attachments/assets/f1b5cccb-868a-4ae3-a22f-66f451371c3f" />
+
+
+There were two 4720 entries. One was for my first mistake account, where I mixed up the Name and the SamAccountName (the Security ID ends in 1110). I deleted it and recreated it, and the log still remembers it. The real `srivera` account has an ID ending in 1111, the same one in the other events. Audit logs keep records even for accounts that were deleted.
